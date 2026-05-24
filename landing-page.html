@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLASHBUILD — Build Sites at the Speed of Thought</title>
+<style>
+:root {
+--pink: #FF2D7B;
+--pink-dim: #cc1f5e;
+--pink-glow: rgba(255,45,123,0.35);
+--bg: #080810;
+--bg2: #0d0d1a;
+--bg3: #111122;
+--text: #f0f0ff;
+--muted: #7070a0;
+--border: rgba(255,45,123,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;overflow-x:hidden;cursor:default}
+::selection{background:var(--pink);color:#000}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;opacity:.04;pointer-events:none;z-index:999;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+background-size:200px 200px}
+
+/* GRID LINES */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+background-image:linear-gradient(rgba(255,45,123,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,45,123,.04) 1px,transparent 1px);
+background-size:60px 60px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;
+border-bottom:1px solid var(--border);backdrop-filter:blur(20px);background:rgba(8,8,16,0.85);transition:all .3s}
+.logo{font-size:1.3rem;font-weight:700;letter-spacing:.1em;color:var(--pink);text-decoration:none;
+text-shadow:0 0 20px var(--pink-glow);font-family:'Courier New',monospace}
+.logo span{color:var(--text);opacity:.6}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;
+transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--pink);transition:width .3s}
+.nav-links a:hover{color:var(--pink)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:var(--pink);color:#000;padding:.5rem 1.2rem;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;
+border:none;cursor:pointer;font-family:'Courier New',monospace;font-weight:700;transition:all .2s;text-decoration:none}
+.nav-cta:hover{background:#fff;box-shadow:0 0 30px var(--pink-glow)}
+
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 2.5rem;z-index:1;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px)}
+.orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(255,45,123,.18),transparent 70%);top:-100px;right:-100px}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,45,123,.1),transparent 70%);bottom:-100px;left:-50px}
+.hero-content{max-width:900px;z-index:2}
+.hero-tag{display:inline-block;border:1px solid var(--pink);color:var(--pink);font-size:.7rem;letter-spacing:.2em;
+text-transform:uppercase;padding:.4rem .9rem;margin-bottom:2rem;animation:fadeUp .8s ease both}
+.hero-h1{font-size:clamp(3rem,9vw,8rem);font-weight:700;line-height:.95;letter-spacing:-.02em;
+font-family:'Courier New',monospace;animation:fadeUp .8s .15s ease both}
+.hero-h1 em{font-style:normal;color:var(--pink);text-shadow:0 0 40px var(--pink-glow),0 0 80px rgba(255,45,123,.2);
+display:inline-block}
+.hero-sub{max-width:520px;margin:2rem 0 3rem;color:var(--muted);font-size:1rem;line-height:1.7;
+animation:fadeUp .8s .3s ease both}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .8s .45s ease both}
+.btn-primary{background:var(--pink);color:#000;padding:1rem 2.5rem;font-size:.85rem;letter-spacing:.15em;
+text-transform:uppercase;border:none;cursor:pointer;font-family:'Courier New',monospace;font-weight:700;
+transition:all .25s;text-decoration:none;display:inline-block;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:#fff;transform:translateX(-100%);transition:transform .3s}
+.btn-primary:hover::before{transform:translateX(0)}
+.btn-primary:hover{box-shadow:0 0 40px var(--pink-glow);color:#000}
+.btn-primary span{position:relative;z-index:1}
+.btn-secondary{border:1px solid var(--border);color:var(--text);padding:1rem 2.5rem;font-size:.85rem;letter-spacing:.15em;
+text-transform:uppercase;cursor:pointer;font-family:'Courier New',monospace;background:transparent;
+transition:all .25s;text-decoration:none;display:inline-block}
+.btn-secondary:hover{border-color:var(--pink);color:var(--pink);box-shadow:0 0 20px rgba(255,45,123,.15)}
+.hero-counter{position:absolute;right:2.5rem;bottom:3rem;text-align:right;animation:fadeUp .8s .6s ease both}
+.hero-counter .num{font-size:3rem;font-weight:700;color:var(--pink);line-height:1}
+.hero-counter .label{font-size:.65rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:.3rem}
+
+/* TICKER */
+.ticker{background:var(--pink);padding:.6rem 0;overflow:hidden;white-space:nowrap;position:relative;z-index:2}
+.ticker-inner{display:inline-flex;animation:tick 20s linear infinite}
+.ticker-item{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#000;font-weight:700;padding:0 2rem}
+.ticker-item::after{content:'✦';padding-left:2rem}
+
+/* FEATURES */
+#features{padding:8rem 2.5rem;position:relative;z-index:1}
+.section-label{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--pink);margin-bottom:1rem}
+.section-h2{font-size:clamp(2rem,5vw,4rem);font-weight:700;line-height:1.05;letter-spacing:-.02em;margin-bottom:5rem;max-width:600px}
+.features-grid{display:flex;gap:1.5rem;flex-wrap:wrap}
+.feature-card{flex:1;min-width:260px;background:var(--bg2);border:1px solid var(--border);padding:2.5rem;
+position:relative;overflow:hidden;transition:all .3s;cursor:default}
+.feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,45,123,.07),transparent);
+opacity:0;transition:opacity .3s}
+.feature-card:hover::before{opacity:1}
+.feature-card:hover{border-color:rgba(255,45,123,.5);transform:translateY(-4px);box-shadow:0 20px 60px rgba(255,45,123,.1)}
+.feature-icon{width:48px;height:48px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+margin-bottom:1.5rem;transition:all .3s}
+.feature-card:hover .feature-icon{border-color:var(--pink);background:rgba(255,45,123,.1)}
+.feature-icon svg{stroke:var(--pink);transition:stroke .3s}
+.feature-h3{font-size:1.1rem;font-weight:700;margin-bottom:.8rem;letter-spacing:.02em}
+.feature-p{color:var(--muted);font-size:.85rem;line-height:1.7}
+.card-num{position:absolute;top:1.5rem;right:1.5rem;font-size:3rem;font-weight:700;color:rgba(255,45,123,.08);line-height:1}
+
+/* HOW IT WORKS */
+#how{padding:8rem 2.5rem;background:var(--bg2);position:relative;z-index:1;border-top:1px solid var(--border)}
+.how-inner{max-width:900px;margin:0 auto}
+.steps{display:flex;gap:0;margin-top:4rem;position:relative;flex-wrap:wrap}
+.steps::before{content:'';position:absolute;top:2.5rem;left:2.5rem;right:2.5rem;height:1px;background:var(--border)}
+.step{flex:1;min-width:220px;padding:0 2rem;position:relative}
+.step-num{width:5rem;height:5rem;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;
+justify-content:center;font-size:1.5rem;font-weight:700;color:var(--pink);margin-bottom:2rem;position:relative;z-index:2;
+transition:all .3s}
+.step:hover .step-num{background:var(--pink);color:#000;border-color:var(--pink);box-shadow:0 0 30px var(--pink-glow)}
+.step-h3{font-size:1rem;font-weight:700;margin-bottom:.8rem;letter-spacing:.05em}
+.step-p{color:var(--muted);font-size:.83rem;line-height:1.7}
+
+/* CTA BAND */
+#cta{padding:8rem 2.5rem;text-align:center;position:relative;z-index:1;overflow:hidden}
+#cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(255,45,123,.12),transparent)}
+.cta-h2{font-size:clamp(2.5rem,7vw,6rem);font-weight:700;line-height:.95;letter-spacing:-.02em;margin-bottom:1.5rem}
+.cta-sub{color:var(--muted);font-size:.95rem;max-width:400px;margin:0 auto 3rem;line-height:1.7}
+
+/* FOOTER */
+footer{padding:3rem 2.5rem;border-top:1px solid var(--border);display:flex;align-items:center;
+justify-content:space-between;flex-wrap:gap;position:relative;z-index:1}
+.footer-logo{font-size:1rem;font-weight:700;letter-spacing:.1em;color:var(--pink)}
+.footer-copy{font-size:.7rem;color:var(--muted);letter-spacing:.1em}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.7rem;letter-spacing:.1em;transition:color .2s}
+.footer-links a:hover{color:var(--pink)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* CURSOR DOT */
+.cursor{width:8px;height:8px;background:var(--pink);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;
+transform:translate(-50%,-50%);transition:transform .1s,width .3s,height .3s;box-shadow:0 0 10px var(--pink)}
+.cursor.big{width:40px;height:40px;background:transparent;border:1px solid var(--pink);mix-blend-mode:difference}
+
+@media(max-width:768px){
+nav{padding:1rem 1.2rem}
+.nav-links{display:none}
+#hero,#features,#how,#cta{padding:6rem 1.2rem}
+.steps::before{display:none}
+.step{padding:0}
+footer{flex-direction:column;gap:1rem;text-align:center}
+.hero-counter{position:static;text-align:left;margin-top:3rem}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav id="nav">
+  <a class="logo" href="#hero">FLASH<span>BUILD</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#cta">Pricing</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get Early Access</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">// Website builder. Reimagined.</div>
+    <h1 class="hero-h1">BUILD<br>SITES AT<br><em>WARP SPEED</em></h1>
+    <p class="hero-sub">Stop wrestling with templates. FlashBuild turns your idea into a live website in under 60 seconds — no code, no drag-and-drop hell, no waiting.</p>
+    <div class="hero-ctas">
+      <a href="#cta" class="btn-primary"><span>Start Building Free →</span></a>
+      <a href="#how" class="btn-secondary">See How It Works</a>
+    </div>
+  </div>
+  <div class="hero-counter">
+    <div class="num" id="counter">0</div>
+    <div class="label">Sites Built Today</div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">60-Second Deploys</span>
+    <span class="ticker-item">Zero Code Required</span>
+    <span class="ticker-item">Live in Minutes</span>
+    <span class="ticker-item">AI-Powered Layouts</span>
+    <span class="ticker-item">Instant CDN</span>
+    <span class="ticker-item">Custom Domains</span>
+    <span class="ticker-item">60-Second Deploys</span>
+    <span class="ticker-item">Zero Code Required</span>
+    <span class="ticker-item">Live in Minutes</span>
+    <span class="ticker-item">AI-Powered Layouts</span>
+    <span class="ticker-item">Instant CDN</span>
+    <span class="ticker-item">Custom Domains</span>
+  </div>
+</div>
+
+<section id="features">
+  <div class="section-label">// What you get</div>
+  <h2 class="section-h2 reveal">Everything you need.<br>Nothing you don't.</h2>
+  <div class="features-grid">
+
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="card-num">01</div>
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <h3 class="feature-h3">Instant Generation</h3>
+      <p class="feature-p">Describe your site in plain English. FlashBuild generates a complete, styled, responsive site in under 10 seconds flat.</p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="card-num">02</div>
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <h3 class="feature-h3">One-Click Deploy</h3>
+      <p class="feature-p">Hit publish and you're live — globally distributed via our CDN with SSL, custom domains, and zero server headaches.</p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="card-num">03</div>
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <h3 class="feature-h3">Edit Anything, Instantly</h3>
+      <p class="feature-p">Click any element to edit. Type to rephrase. No code, no export, no bloat — just direct manipulation that actually makes sense.</p>
+    </div>
+
+  </div>
+</section>
+
+<section id="how">
+  <div class="how-inner">
+    <div class="section-label reveal">// The process</div>
+    <h2 class="section-h2 reveal">From idea to live<br>in three moves.</h2>
+    <div class="steps">
+
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <h3 class="step-h3">Describe It</h3>
+        <p class="step-p">Type what your site is about. A portfolio, a landing page, a product launch — anything. One sentence is enough.</p>
+      </div>
+
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <h3 class="step-h3">Watch It Appear</h3>
+        <p class="step-p">FlashBuild generates your site in real time. Structure, copy, layout, style — all tuned to your intent, live on screen.</p>
+      </div>
+
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <h3 class="step-h3">Go Live</h3>
+        <p class="step-p">Tweak anything you want, then hit publish. Your site is live, indexed, and fast — before your coffee gets cold.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="section-label reveal">// Join the waitlist</div>
+  <h2 class="cta-h2 reveal">Your site.<br><em style="font-style:normal;color:var(--pink)">Right now.</em></h2>
+  <p class="cta-sub reveal">Early access is free. Be first. Build fast. We're letting in 500 builders — spots are going quick.</p>
+  <div class="reveal" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;align-items:center">
+    <input type="email" id="email-input" placeholder="your@email.com" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);
+    padding:1rem 1.5rem;font-family:'Courier New',monospace;font-size:.85rem;width:280px;outline:none;transition:border .2s"
+    onfocus="this.style.borderColor='var(--pink)'" onblur="this.style.borderColor='var(--border)'">
+    <button class="btn-primary" onclick="handleSignup()"><span>Claim My Spot →</span></button>
+  </div>
+  <div id="signup-msg" style="margin-top:1.5rem;color:var(--pink);font-size:.8rem;letter-spacing:.1em;min-height:1.2em"></div>
+</section>
+
+<footer>
+  <div class="footer-logo">FLASHBUILD</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">X / Twitter</a>
+  </div>
+  <div class="footer-copy">© 2025 FlashBuild Inc. All rights reserved.</div>
+</footer>
+
+<script>
+// CURSOR
+const cur = document.getElementById('cursor');
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+document.querySelectorAll('a,button,input,.feature-card,.step').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('big'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
+});
+
+// COUNTER ANIMATION
+let target = 2847;
+let current = 0;
+function animCounter(){
+  let step = Math.ceil(target/60);
+  let timer = setInterval(()=>{
+    current = Math.min(current+step,target);
+    document.getElementById('counter').textContent = current.toLocaleString();
+    if(current>=target) clearInterval(timer);
+  },30);
+}
+setTimeout(animCounter,800);
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:.15});
+reveals.forEach(r=>obs.observe(r));
+
+// NAV SCROLL EFFECT
+window.addEventListener('scroll',()=>{
+  const nav = document.getElementById('nav');
+  nav.style.borderBottomColor = window.scrollY>50?'rgba(255,45,123,0.35)':'rgba(255,45,123,0.2)';
+});
+
+// SMOOTH SCROLL for nav links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth'})}
+  });
+});
+
+// SIGNUP
+function handleSignup(){
+  const v = document.getElementById('email-input').value;
+  const msg = document.getElementById('signup-msg');
+  if(!v||!v.includes('@')){msg.style.color='#ff6b6b';msg.textContent='// Enter a valid email address.';return}
+  msg.style.color='var(--pink)';
+  msg.textContent='// You\'re on the list. We\'ll be in touch soon. ✦';
+  document.getElementById('email-input').value='';
+}
+document.getElementById('email-input').addEventListener('keydown',e=>{if(e.key==='Enter')handleSignup()});
+
+// FEATURE CARD TILT
+document.querySelectorAll('.feature-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`translateY(-4px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+});
+</script>
+</body>
+</html>
