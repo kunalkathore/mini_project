@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidemark — AI Video Polishing for Creators</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1B3A5C;
+            --navy-light: #2A5A8C;
+            --navy-dark: #0F1F2E;
+            --sand: #F5EFE7;
+            --sand-dark: #E8DFD3;
+            --accent: #4FA3D1;
+            --text-primary: #1B3A5C;
+            --text-light: #FFFFFF;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--sand) 0%, #F9F5F0 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: #3A5A7A;
+            max-width: 65ch;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(245, 239, 231, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(27, 58, 92, 0.08);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: -0.03em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1.5rem;
+                font-size: 0.9rem;
+            }
+            nav {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(79, 163, 209, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            left: -8%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(27, 58, 92, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            z-index: 10;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            color: var(--navy);
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #4A6A8A;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(27, 58, 92, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: left 0.4s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(27, 58, 92, 0.3);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            color: var(--navy);
+        }
+
+        /* Features Section */
+        .features {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 6rem 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            background: var(--sand);
+            border-radius: 12px;
+            border: 1px solid rgba(27, 58, 92, 0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(27, 58, 92, 0.1);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--navy-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon svg {
+            stroke: var(--text-light);
+            stroke-width: 1.5;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #5A7A9A;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: linear-gradient(135deg, rgba(27, 58, 92, 0.03) 0%, rgba(79, 163, 209, 0.03) 100%);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            padding: 2rem;
+            background: var(--sand);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .step.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: var(--text-light);
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            color: var(--navy);
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .step p {
+            font-size: 1rem;
+            color: #5A7A9A;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy);
+            color: var(--sand);
+            text-align: center;
+            padding: 3rem 2rem;
+            font-size: 0.95rem;
+        }
+
+        footer p {
+            color: var(--sand);
+            max-width: 100%;
+        }
+
+        /* Scroll animations */
+        .fade-in-on-scroll {
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateY(20px);
+        }
+
+        .fade-in-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 4rem 1.5rem;
+            }
+
+            .hero {
+                padding: 100px 1.5rem 3rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Tidemark</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#cta">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Transform Raw Footage Into Viral Content</h1>
+            <p class="hero-subtitle">AI-powered vertical video polishing. Professional results in under an hour.</p>
+            <button class="cta-button" onclick="document.getElementById('cta').scrollIntoView({behavior: 'smooth'})">
+                Start Polishing Now
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-title">
+            <h2>Why Creators Love Tidemark</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                        <polyline points="13 2 13 9 20 9"/>
+                        <line x1="9" y1="13" x2="15" y2="13"/>
+                        <line x1="9" y1="17" x2="15" y2="17"/>
+                    </svg>
+                </div>
+                <h3>Instant Editing</h3>
+                <p>Upload messy phone footage, get polished vertical videos optimized for TikTok, Instagram, and YouTube Shorts—automatically.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <h3>Under 60 Minutes</h3>
+                <p>No waiting. Tired of editing queues? Get polished, platform-ready videos delivered in under an hour, every time.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <h3>Pro Quality</h3>
+                <p>Smooth transitions, color grading, smart cuts, and perfect sound—all handled by our AI trained on thousands of viral videos.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-title">
+            <h2>Three Simple Steps</h2>
+        </div>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Upload Your Raw Footage</h3>
+                <p>Drop your unedited smartphone videos—no matter how rough. We handle vertical, horizontal, or mixed aspect ratios.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>AI Does the Heavy Lifting</h3>
+                <p>Our algorithm analyzes pacing, lighting, and content flow. It cuts dead moments, syncs audio, and applies pro-grade color grading.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Download & Share</h3>
+                <p>Receive optimized files ready for every platform. Post directly to TikTok, Reels, or Shorts with zero additional tweaks needed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="cta" style="text-align: center; background: rgba(255, 255, 255, 0.3); border-radius: 12px;">
+        <h2 style="margin-bottom: 1rem;">Ready to Ditch the Edit Suite?</h2>
+        <p style="margin-bottom: 2rem; margin-left: auto; margin-right: auto;">Join 500+ creators who've saved 10+ hours per week. Get your first video polished free.</p>
+        <button class="cta-button" onclick="alert('Welcome to Tidemark! Feature coming soon.')">
+            Claim Free Conversion
+        </button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Tidemark. Polishing short films, one frame at a time.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Observe steps
+        document.querySelectorAll('.step').forEach((step, index) => {
+            step.style.animationDelay = `${index * 0.1}s`;
+            observer.observe(step);
+        });
+
+        // Subtle parallax on hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const hero = document.querySelector('.hero');
+            if (scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
