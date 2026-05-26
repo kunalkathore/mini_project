@@ -7,6 +7,7 @@ The project focuses on applying practical concepts of:
 ✨ User-Friendly UI/UX
 ✨ Problem Solving & Logical Thinking
 
+
 🛠️ Technologies Used:
 
 HTML
