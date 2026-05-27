@@ -6,7 +6,6 @@ The project focuses on applying practical concepts of:
 ✨ Database Integration
 ✨ User-Friendly UI/UX
 ✨ Problem Solving & Logical Thinking
-l
 
 🛠️ Technologies Used:
 
