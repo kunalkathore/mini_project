@@ -9,7 +9,7 @@ The project focuses on applying practical concepts of:
 
 
 🛠️ Technologies Used:
-00
+
 HTML
 CSS
 JavaScript
