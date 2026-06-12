@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheelless — Groceries, Delivered</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--coral:#FF6B6B;
+--coral-dark:#e85555;
+--coral-light:#FF8E8E;
+--cream:#FFF8F0;
+--cream-dark:#FFE8D6;
+--ink:#1A1208;
+--soft:#7A6258;
+--white:#FFFFFF;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:background .3s,box-shadow .3s}
+nav.scrolled{background:rgba(255,248,240,.95);backdrop-filter:blur(8px);box-shadow:0 2px 20px rgba(255,107,107,.12)}
+.nav-logo{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;color:var(--coral);letter-spacing:-.02em;cursor:pointer}
+.nav-logo span{color:var(--ink)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{text-decoration:none;color:var(--soft);font-size:.9rem;font-weight:500;letter-spacing:.02em;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:2px;background:var(--coral);border-radius:2px;transition:width .25s}
+.nav-links a:hover{color:var(--coral)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:var(--coral);color:var(--white);border:none;padding:.6rem 1.4rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.nav-cta:hover{background:var(--coral-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,107,.35)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;top:-10%;right:-5%;width:55%;height:120%;background:radial-gradient(ellipse at 60% 40%,var(--coral-light) 0%,transparent 65%);opacity:.18;pointer-events:none}
+.hero-blob{position:absolute;top:15%;right:8%;width:380px;height:380px;background:var(--coral);opacity:.08;border-radius:60% 40% 70% 30%/50% 60% 40% 50%;animation:blobmorph 8s ease-in-out infinite}
+@keyframes blobmorph{0%,100%{border-radius:60% 40% 70% 30%/50% 60% 40% 50%}50%{border-radius:40% 60% 30% 70%/60% 40% 60% 40%}}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--cream-dark);border-radius:50px;padding:.4rem 1rem;font-size:.8rem;font-weight:500;color:var(--coral);margin-bottom:1.5rem;opacity:0;transform:translateY(20px);animation:fadeUp .6s .1s forwards}
+.hero-tag-dot{width:8px;height:8px;background:var(--coral);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+h1{font-family:'Fraunces',serif;font-size:clamp(3rem,5vw,5rem);font-weight:900;line-height:1.0;letter-spacing:-.04em;opacity:0;transform:translateY(30px);animation:fadeUp .7s .2s forwards}
+h1 em{font-style:italic;color:var(--coral)}
+.hero-sub{font-size:1.1rem;line-height:1.7;color:var(--soft);margin-top:1.2rem;max-width:440px;font-weight:300;opacity:0;transform:translateY(20px);animation:fadeUp .7s .35s forwards}
+.hero-actions{display:flex;align-items:center;gap:1.2rem;margin-top:2rem;opacity:0;transform:translateY(20px);animation:fadeUp .7s .5s forwards}
+.btn-primary{background:var(--coral);color:var(--white);border:none;padding:.9rem 2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;transition:all .25s;box-shadow:0 8px 25px rgba(255,107,107,.3)}
+.btn-primary:hover{background:var(--coral-dark);transform:translateY(-2px);box-shadow:0 12px 35px rgba(255,107,107,.4)}
+.btn-primary:active{transform:translateY(0)}
+.hero-note{font-size:.82rem;color:var(--soft);font-weight:300}
+.hero-visual{display:flex;justify-content:center;align-items:center;opacity:0;animation:fadeUp .9s .4s forwards}
+.hero-card{background:var(--white);border-radius:28px;padding:2rem;box-shadow:0 20px 60px rgba(255,107,107,.12);width:300px;position:relative}
+.hero-card-tag{background:var(--cream-dark);border-radius:12px;padding:.5rem .8rem;font-size:.75rem;font-weight:500;color:var(--coral);display:inline-block;margin-bottom:1rem}
+.hero-card h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;color:var(--ink)}
+.grocery-items{display:flex;flex-direction:column;gap:.7rem}
+.g-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--cream);border-radius:12px;font-size:.85rem;transition:transform .2s}
+.g-item:hover{transform:translateX(4px)}
+.g-item-left{display:flex;align-items:center;gap:.6rem;color:var(--ink)}
+.g-item-price{color:var(--coral);font-weight:500}
+.hero-badge{position:absolute;top:-12px;right:-12px;background:var(--coral);color:var(--white);border-radius:50%;width:60px;height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.65rem;font-weight:500;text-align:center;line-height:1.2;box-shadow:0 6px 20px rgba(255,107,107,.4);animation:spin-badge 20s linear infinite}
+@keyframes spin-badge{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* FEATURES */
+#features{padding:6rem 2rem;background:var(--white)}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-tag{display:inline-block;background:var(--cream-dark);color:var(--coral);font-size:.8rem;font-weight:500;padding:.35rem .9rem;border-radius:50px;margin-bottom:1rem;letter-spacing:.05em;text-transform:uppercase}
+.section-title{font-family:'Fraunces',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:.8rem}
+.section-title em{color:var(--coral);font-style:italic}
+.section-sub{color:var(--soft);font-size:1rem;font-weight:300;line-height:1.6;max-width:480px;margin-bottom:3.5rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{padding:2.2rem;border-radius:24px;background:var(--cream);border:1.5px solid var(--cream-dark);transition:transform .3s,box-shadow .3s,border-color .3s;cursor:default}
+.feature-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(255,107,107,.1);border-color:var(--coral-light)}
+.feature-icon{width:48px;height:48px;background:var(--coral);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:1.4rem;transition:transform .3s}
+.feature-card:hover .feature-icon{transform:scale(1.1) rotate(-4deg)}
+.feature-card h3{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;margin-bottom:.7rem;letter-spacing:-.02em}
+.feature-card p{color:var(--soft);font-size:.9rem;line-height:1.65;font-weight:300}
+
+/* HOW IT WORKS */
+#how{padding:6rem 2rem;background:var(--cream)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.5rem;position:relative}
+.steps::before{content:'';position:absolute;top:32px;left:calc(16% + 32px);right:calc(16% + 32px);height:2px;background:repeating-linear-gradient(90deg,var(--coral-light) 0,var(--coral-light) 8px,transparent 8px,transparent 16px)}
+.step{text-align:center;position:relative}
+.step-num{width:64px;height:64px;background:var(--coral);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;color:var(--white);position:relative;z-index:1;transition:transform .3s,box-shadow .3s}
+.step:hover .step-num{transform:scale(1.12);box-shadow:0 10px 30px rgba(255,107,107,.35)}
+.step h3{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:.6rem;letter-spacing:-.02em}
+.step p{color:var(--soft);font-size:.9rem;line-height:1.65;font-weight:300}
+
+/* FOOTER */
+footer{background:var(--ink);color:var(--white);padding:3rem 2rem;text-align:center}
+.footer-logo{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;color:var(--coral);margin-bottom:.6rem}
+.footer-tagline{color:rgba(255,255,255,.4);font-size:.85rem;font-weight:300;margin-bottom:1.5rem}
+.footer-links{display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1.5rem}
+.footer-links a{color:rgba(255,255,255,.5);text-decoration:none;font-size:.85rem;transition:color .2s}
+.footer-links a:hover{color:var(--coral)}
+.footer-copy{color:rgba(255,255,255,.25);font-size:.78rem}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+.hero-inner{grid-template-columns:1fr}
+.hero-visual{display:none}
+.features-grid{grid-template-columns:1fr}
+.steps{grid-template-columns:1fr}
+.steps::before{display:none}
+.nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">Wheel<span>less</span></div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#footer">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">Get started</button>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-blob"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tag">
+        <div class="hero-tag-dot"></div>
+        Now delivering in 50+ cities
+      </div>
+      <h1>Fresh groceries,<br><em>no car</em><br>required.</h1>
+      <p class="hero-sub">Wheelless brings your weekly shop straight to your door — so whether you take the bus, walk, or just can't be bothered, dinner is sorted.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Start your first order</button>
+        <span class="hero-note">Free delivery on order #1</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-badge">Free<br>Delivery</div>
+        <div class="hero-card-tag">Today's basket</div>
+        <h3>Your weekly shop ✓</h3>
+        <div class="grocery-items">
+          <div class="g-item">
+            <div class="g-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="1.8" stroke-linecap="round"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Organic tomatoes
+            </div>
+            <span class="g-item-price">$2.49</span>
+          </div>
+          <div class="g-item">
+            <div class="g-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="12" rx="5" ry="8" transform="rotate(-30 12 12)"/></svg>
+              Sourdough loaf
+            </div>
+            <span class="g-item-price">$3.99</span>
+          </div>
+          <div class="g-item">
+            <div class="g-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>
+              Milk & eggs
+            </div>
+            <span class="g-item-price">$5.20</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Why Wheelless</div>
+      <h2 class="section-title">Built for the<br><em>carless life</em></h2>
+      <p class="section-sub">Forget hauling bags on the bus. We handle the heavy lifting so you can focus on the good stuff.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+        <h3>Same-day delivery</h3>
+        <p>Order before noon and your groceries arrive the same evening. No more planning days ahead or missing a dinner ingredient.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6v11a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><path d="M9 22V12h6v10"/></svg>
+        </div>
+        <h3>Delivered to your door</h3>
+        <p>Right to your apartment, flat, or house — not the lobby. Contactless drop-off or hand-to-hand, your choice.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <h3>Local & fresh first</h3>
+        <p>We source from neighbourhood markets and local farms. Fresher produce, shorter travel, better taste — and you skip the parking lot entirely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center">
+      <div class="section-tag">How it works</div>
+      <h2 class="section-title">Three steps to<br><em>stress-free</em> groceries</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <h3>Browse & add to cart</h3>
+        <p>Pick from hundreds of fresh items — from pantry staples to weekly produce — all in one tidy app.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <h3>Pick your time slot</h3>
+        <p>Morning, afternoon, or evening — choose when works for you. We'll send a live tracker when your rider is on the way.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <h3>Open the door & cook</h3>
+        <p>Your groceries arrive fresh, packed, and ready to unbox. No driving, no dragging, no drama.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="footer-logo">Wheelless</div>
+  <p class="footer-tagline">Groceries for the carless generation.</p>
+  <ul class="footer-links">
+    <li><a href="#">About</a></li>
+    <li><a href="#">Careers</a></li>
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 Wheelless Inc. All rights reserved.</p>
+</footer>
+
+<script>
+// Navbar scroll
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>40);
+});
+
+// Smooth scroll for all anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
+  });
+});
+
+// Scroll reveal
+const revealEls=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){en.target.classList.add('visible');io.unobserve(en.target)}
+  });
+},{threshold:.12});
+revealEls.forEach(el=>io.observe(el));
+
+// Hero card item hover ripple
+document.querySelectorAll('.g-item').forEach(item=>{
+  item.addEventListener('mouseenter',()=>{item.style.background='#FFE8D6'});
+  item.addEventListener('mouseleave',()=>{item.style.background=''});
+});
+
+// CTA button pulse on load
+setTimeout(()=>{
+  const btn=document.querySelector('.btn-primary');
+  btn.style.transition='box-shadow .4s';
+  btn.style.boxShadow='0 0 0 6px rgba(255,107,107,.18)';
+  setTimeout(()=>{btn.style.boxShadow=''},600);
+},1800);
+</script>
+</body>
+</html>
