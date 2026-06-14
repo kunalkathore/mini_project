@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synth | Music Licensing for Game Developers</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2D5016;
+      --light: #F5F5F0;
+      --accent: #4A7C2E;
+      --text: #1a1a1a;
+      --border: #E8E8E0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--light);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      background: rgba(245, 245, 240, 0.95);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        gap: 1.5rem;
+        font-size: 0.85rem;
+      }
+      .nav-container {
+        padding: 1rem 1.5rem;
+      }
+    }
+
+    /* HERO */
+    .hero {
+      padding: 8rem 2rem 6rem;
+      margin-top: 4rem;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(74, 124, 46, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      color: #555;
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--primary);
+      color: var(--light);
+      text-decoration: none;
+      font-size: 1rem;
+      font-family: 'Georgia', serif;
+      border: 2px solid var(--primary);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
+
+    .cta-button:hover::before {
+      left: 0;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(45, 80, 22, 0.2);
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 6rem 2rem;
+      background: var(--light);
+      scroll-margin-top: 80px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .section-header p {
+      font-size: 1.1rem;
+      color: #666;
+      max-width: 500px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    .features-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 3rem;
+    }
+
+    .feature-card {
+      padding: 2.5rem 2rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: all 0.5s ease;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .feature-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 12px 32px rgba(45, 80, 22, 0.08);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+    }
+
+    .feature-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* HOW IT WORKS */
+    .how-it-works {
+      padding: 6rem 2rem;
+      background: white;
+      scroll-margin-top: 80px;
+    }
+
+    .steps-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .step {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 4rem;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .step:nth-child(1) { animation-delay: 0.1s; }
+    .step:nth-child(2) { animation-delay: 0.2s; }
+    .step:nth-child(3) { animation-delay: 0.3s; }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      color: var(--light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .step-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .step-content p {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      background: var(--primary);
+      color: var(--light);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    footer p {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(245, 245, 240, 0.8);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--light);
+    }
+
+    /* SCROLL ANIMATIONS */
+    .scroll-fade {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .scroll-fade.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 6rem 1.5rem 4rem;
+        min-height: auto;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .features-grid {
+        gap: 2rem;
+      }
+
+      .step {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // SMOOTH SCROLL
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (href !== '#') {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // SCROLL REVEAL
+      const reveals = document.querySelectorAll('.scroll-fade');
+      const reveal = () => {
+        reveals.forEach(el => {
+          const windowHeight = window.innerHeight;
+          const revealTop = el.getBoundingClientRect().top;
+          const revealPoint = 150;
+          if (revealTop < windowHeight - revealPoint) {
+            el.classList.add('visible');
+          }
+        });
+      };
+
+      window.addEventListener('scroll', reveal);
+      reveal();
+
+      // NAV BACKGROUND ON SCROLL
+      const nav = document.querySelector('nav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav.style.borderBottomColor = 'var(--border)';
+        } else {
+          nav.style.borderBottomColor = 'var(--border)';
+        }
+      });
+
+      // BUTTON RIPPLE
+      document.querySelectorAll('.cta-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-container">
+      <div class="logo">SYNTH</div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>One Contract. Infinite Platforms.</h1>
+      <p>Automate music licensing and sync rights coordination. Stop managing spreadsheets. Let Synth handle the complexity.</p>
+      <a href="#" class="cta-button">Start Your Free Trial</a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Designed for Developers</h2>
+      <p>Everything you need to manage music rights, simplified</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+        </svg>
+        <h3>Instant Sync Contracts</h3>
+        <p>Auto-generate compliant sync agreements for every platform in seconds. No lawyers. No delays.</p>
+      </div>
+
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+        </svg>
+        <h3>Rights Dashboard</h3>
+        <p>Track licensing status, expiration dates, and royalty splits across all your games at a glance.</p>
+      </div>
+
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <h3>Compliance Built-In</h3>
+        <p>Stay compliant with platform terms. Steam, Epic, console stores—we handle every requirement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+      <h2>Three Steps to Freedom</h2>
+      <p>From chaos to control in minutes</p>
+    </div>
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Upload Your Music</h3>
+          <p>Import your game soundtrack and composer details. Synth reads metadata and builds your music profile instantly.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Select Your Platforms</h3>
+          <p>Choose where your game will launch—Steam, Epic, PlayStation, Nintendo, mobile, VR. Synth knows each platform's licensing rules.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Deploy & Track</h3>
+          <p>Download your contracts, signature templates, and compliance checklist. Monitor rights and royalties from your dashboard forever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-content">
+      <p>&copy; 2024 Synth. Music licensing for developers who build worlds.</p>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">hello@synthmusic.dev</a>
+        <a href="#">Documentation</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
