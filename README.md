@@ -17,7 +17,7 @@ Supabase / Database Integration
 
 Through this project, I improved my understanding of building scalable and functional applications while following clean coding practices.
 
-📌 Key Highlights:
+📌 Key Highlights :
 
 Responsive Design
 Interactive Features
